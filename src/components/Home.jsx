@@ -3,11 +3,11 @@ import axios from 'axios';
 import './Home.css';
 
 function Home() {
-  const [items, setItems] = useState([]);
-  const [inputValue, setInputValue] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [todos, setTodos] = useState([]);   // To store the list of todos
+  const [inputValue, setInputValue] = useState(''); // To store the input value for the new todo
+  const [loading, setLoading] = useState(false); // To handle loading state while adding a todo
 
-  // Fetch todos when component mounts
+  // Fetch todos from the server when the component loads
   useEffect(() => {
     fetchTodos();
   }, []);
@@ -16,57 +16,53 @@ function Home() {
   const fetchTodos = async () => {
     try {
       const response = await axios.get('http://localhost:5000/api/todos');
-      setItems(response.data);
+      setTodos(response.data);  // Set the fetched todos to state
     } catch (error) {
-      console.error('Error fetching todos:', error);
+      console.error('Error fetching todos:', error);  // Log any errors
     }
   };
 
-  // Handle form submission
+  // Add a new todo
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (inputValue.trim() === '') return;
+    e.preventDefault();  // Prevent form from reloading page
+    if (inputValue.trim() === '') return;  // Do nothing if input is empty
 
-    setLoading(true);
+    setLoading(true);  // Set loading to true while adding todo
     try {
       const response = await axios.post('http://localhost:5000/api/todos', {
         text: inputValue,
         completed: false
       });
-      setItems([...items, response.data]);
-      setInputValue('');
+      setTodos([...todos, response.data]);  // Add new todo to the list
+      setInputValue('');  // Clear the input field
     } catch (error) {
-      console.error('Error adding todo:', error);
+      console.error('Error adding todo:', error);  // Log any errors
     } finally {
-      setLoading(false);
+      setLoading(false);  // Reset loading state after the request
     }
   };
 
-  // Handle delete
+  // Delete a todo
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/todos/${id}`);
-      setItems(items.filter(item => item.id !== id));
+      await axios.delete(`http://localhost:5000/api/todos/${id}`);  // Delete todo from server
+      setTodos(todos.filter(todo => todo._id !== id));  // Remove deleted todo from state
     } catch (error) {
-      console.error('Error deleting todo:', error);
+      console.error('Error deleting todo:', error);  // Log any errors
     }
   };
 
-  // Handle edit
+  // Edit a todo
   const handleEdit = async (id) => {
-    const itemToEdit = items.find(item => item.id === id);
-    const updatedValue = prompt('Edit item:', itemToEdit.text);
-    
+    const updatedValue = prompt('Edit todo:', '');  // Prompt user for new value
     if (updatedValue !== null && updatedValue.trim() !== '') {
       try {
         const response = await axios.put(`http://localhost:5000/api/todos/${id}`, {
           text: updatedValue
         });
-        setItems(items.map(item =>
-          item.id === id ? response.data : item
-        ));
+        setTodos(todos.map(todo => todo._id === id ? response.data : todo));  // Update todo in state
       } catch (error) {
-        console.error('Error updating todo:', error);
+        console.error('Error updating todo:', error);  // Log any errors
       }
     }
   };
@@ -74,39 +70,28 @@ function Home() {
   return (
     <div className="container">
       <h2>Todo List</h2>
-      
+
+      {/* Form to add a new todo */}
       <form onSubmit={handleSubmit} className="input-form">
         <input
           type="text"
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          placeholder="Enter your task"
-          className="form-input"
-          disabled={loading}
+          onChange={(e) => setInputValue(e.target.value)}  // Update input value
+          placeholder="Enter a task"
+          disabled={loading}  // Disable input while loading
         />
-        <button type="submit" className="submit-button" disabled={loading}>
-          {loading ? 'Adding...' : 'Add Task'}
+        <button type="submit" disabled={loading}>
+          {loading ? 'Adding...' : 'Add Task'}  {/* Show loading text while adding */}
         </button>
       </form>
 
+      {/* Display list of todos */}
       <div className="data-list">
-        {items.map((item) => (
-          <div key={item._id} className="data-item">
-            <span className="item-text">{item.text}</span>
-            <div className="button-group">
-              <button
-                onClick={() => handleEdit(item._id)}
-                className="edit-button"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => handleDelete(item._id)}
-                className="delete-button"
-              >
-                Delete
-              </button>
-            </div>
+        {todos.map((todo) => (
+          <div key={todo._id} className="data-item">
+            <span>{todo.text}</span>
+            <button onClick={() => handleEdit(todo._id)}>Edit</button>
+            <button onClick={() => handleDelete(todo._id)}>Delete</button>
           </div>
         ))}
       </div>

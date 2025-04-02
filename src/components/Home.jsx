@@ -10,7 +10,7 @@ function Home() {
   // Fetch todos from the server when the component loads
   useEffect(() => {
     fetchTodos();
-  }, []);
+  });
 
   // Fetch all todos
   const fetchTodos = async () => {

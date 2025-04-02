@@ -45,12 +45,13 @@ function Home() {
   // Delete a todo
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://reactbackend-1-wqxw.onrender.com/api/todos/${id}`);  // Delete todo from server
-      setTodos(todos.filter(todo => todo._id !== id));  // Remove deleted todo from state
+      await axios.delete(`https://reactbackend-1-wqxw.onrender.com/api/todos/${id}`);
+      setTodos((prevTodos) => prevTodos.filter(todo => todo._id !== id));  // Use prevTodos for a safer update
     } catch (error) {
-      console.error('Error deleting todo:', error);  // Log any errors
+      console.error('Error deleting todo:', error.response ? error.response.data : error.message);
     }
   };
+  
 
   // Edit a todo
   const handleEdit = async (id) => {

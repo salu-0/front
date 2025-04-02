@@ -15,7 +15,7 @@ function Home() {
   // Fetch all todos
   const fetchTodos = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/todos');
+      const response = await axios.get('https://reactbackend-1-wqxw.onrender.com/api/todos');
       setTodos(response.data);  // Set the fetched todos to state
     } catch (error) {
       console.error('Error fetching todos:', error);  // Log any errors
@@ -29,7 +29,7 @@ function Home() {
 
     setLoading(true);  // Set loading to true while adding todo
     try {
-      const response = await axios.post('http://localhost:5000/api/todos', {
+      const response = await axios.post('https://reactbackend-1-wqxw.onrender.com/api/todos', {
         text: inputValue,
         completed: false
       });
@@ -45,7 +45,7 @@ function Home() {
   // Delete a todo
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/todos/${id}`);  // Delete todo from server
+      await axios.delete(`https://reactbackend-1-wqxw.onrender.com/api/todos/${id}`);  // Delete todo from server
       setTodos(todos.filter(todo => todo._id !== id));  // Remove deleted todo from state
     } catch (error) {
       console.error('Error deleting todo:', error);  // Log any errors
@@ -57,7 +57,7 @@ function Home() {
     const updatedValue = prompt('Edit todo:', '');  // Prompt user for new value
     if (updatedValue !== null && updatedValue.trim() !== '') {
       try {
-        const response = await axios.put(`http://localhost:5000/api/todos/${id}`, {
+        const response = await axios.put(`https://reactbackend-1-wqxw.onrender.com/api/todos/${id}`, {
           text: updatedValue
         });
         setTodos(todos.map(todo => todo._id === id ? response.data : todo));  // Update todo in state

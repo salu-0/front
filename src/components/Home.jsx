@@ -6,18 +6,25 @@ function Home() {
   const [todos, setTodos] = useState([]);   // To store the list of todos
   const [inputValue, setInputValue] = useState(''); // To store the input value for the new todo
   const [loading, setLoading] = useState(false); // To handle loading state while adding a todo
+  const [error, setError] = useState(null); // To store and display fetch errors
 
   // Fetch todos from the server when the component loads
   useEffect(() => {
     fetchTodos();
-  });
+  }, []); // Only fetch on mount to avoid infinite loop
 
   // Fetch all todos
   const fetchTodos = async () => {
     try {
+      setError(null); // Clear any previous errors
       const response = await axios.get('https://back-lts2.onrender.com/api/todos');
       setTodos(response.data);  // Set the fetched todos to state
     } catch (error) {
+      if (error.response?.status === 500) {
+        setError('Server error occurred. Please try again later.');
+      } else {
+        setError(error.response?.data?.message || error.message || 'Failed to fetch todos');
+      }
       console.error('Error fetching todos:', error);  // Log any errors
     }
   };
@@ -29,13 +36,35 @@ function Home() {
 
     setLoading(true);  // Set loading to true while adding todo
     try {
+      // Create a temporary todo with a temporary ID
+      const tempTodo = {
+        _id: Date.now(), // Temporary ID
+        text: inputValue,
+        completed: false
+      };
+      
+      // Optimistically add the todo to the UI
+      setTodos(prevTodos => [tempTodo, ...prevTodos]);
+      setInputValue('');  // Clear the input field immediately
+
+      // Make the API call
       const response = await axios.post('https://back-lts2.onrender.com/api/todos', {
         text: inputValue,
         completed: false
       });
-      setTodos([...todos, response.data]);  // Add new todo to the list
-      setInputValue('');  // Clear the input field
+
+      // Replace the temporary todo with the real one from the server
+      setTodos(prevTodos => prevTodos.map(todo => 
+        todo._id === tempTodo._id ? response.data : todo
+      ));
     } catch (error) {
+      // If there's an error, remove the temporary todo
+      setTodos(prevTodos => prevTodos.filter(todo => todo._id !== tempTodo._id));
+      if (error.response?.status === 500) {
+        setError('Server error occurred. Please try again later.');
+      } else {
+        setError(error.response?.data?.message || error.message || 'Failed to add todo');
+      }
       console.error('Error adding todo:', error);  // Log any errors
     } finally {
       setLoading(false);  // Reset loading state after the request
@@ -46,13 +75,18 @@ function Home() {
   const handleDelete = async (id) => {
     try {
       await axios.delete(`https://back-lts2.onrender.com/api/todos/${id}`);
-      setTodos((prevTodos) => prevTodos.filter(todo => todo._id !== id));  // Use prevTodos for a safer update
+      // Only update UI after successful deletion
+      setTodos(prevTodos => prevTodos.filter(todo => todo._id !== id));
     } catch (error) {
-      console.error('Error deleting todo:', error.response ? error.response.data : error.message);
+      if (error.response?.status === 500) {
+        setError('Server error occurred. Please try again later.');
+      } else {
+        setError(error.response?.data?.message || error.message || 'Failed to delete todo');
+      }
+      console.error('Error deleting todo:', error);
     }
   };
   
-
   // Edit a todo
   const handleEdit = async (id) => {
     const updatedValue = prompt('Edit todo:', '');  // Prompt user for new value
@@ -61,9 +95,15 @@ function Home() {
         const response = await axios.put(`https://back-lts2.onrender.com/api/todos/${id}`, {
           text: updatedValue
         });
-        setTodos(todos.map(todo => todo._id === id ? response.data : todo));  // Update todo in state
+        // Only update UI after successful edit
+        setTodos(prevTodos => prevTodos.map(todo => todo._id === id ? response.data : todo));
       } catch (error) {
-        console.error('Error updating todo:', error);  // Log any errors
+        if (error.response?.status === 500) {
+          setError('Server error occurred. Please try again later.');
+        } else {
+          setError(error.response?.data?.message || error.message || 'Failed to update todo');
+        }
+        console.error('Error updating todo:', error);
       }
     }
   };
@@ -86,10 +126,17 @@ function Home() {
         </button>
       </form>
 
+      {/* Display error message if there is one */}
+      {error && (
+        <div className="error-message">
+          {error}
+        </div>
+      )}
+
       {/* Display list of todos */}
       <div className="data-list">
-        {todos.map((todo) => (
-          <div key={todo._id} className="data-item">
+        {todos.map((todo, index) => (
+          <div key={todo._id || index} className="data-item">
             <span>{todo.text}</span>
             <button onClick={() => handleEdit(todo._id)}>Edit</button>
             <button onClick={() => handleDelete(todo._id)}>Delete</button>

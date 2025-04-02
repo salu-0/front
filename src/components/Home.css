@@ -2,129 +2,131 @@
 
 /* General container styling */
 .container {
-    width: 90%;
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 30px;
-    text-align: center;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #f7f7f7, #e2e2e2);
-  }
-  
-  /* Heading style */
-  h2 {
-    font-size: 28px;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 20px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-  
-  /* Input form styling */
-  .input-form {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 30px;
-    gap: 15px;
-  }
-  
-  .input-form input {
-    padding: 12px 18px;
-    font-size: 16px;
-    border: 2px solid #ddd;
-    border-radius: 30px;
-    width: 70%;
-    max-width: 350px;
-    background-color: #f7f7f7;
-    transition: border-color 0.3s ease, background-color 0.3s ease;
-  }
-  
-  .input-form input:focus {
-    outline: none;
-    border-color: #007bff;
-    background-color: #fff;
-  }
-  
-  .input-form button {
-    padding: 12px 25px;
-    background-color: #007bff;
-    color: white;
-    font-size: 16px;
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    min-width: 120px;
-  }
-  
-  .input-form button:hover {
-    background-color: #0056b3;
-    transform: translateY(-2px);
-  }
-  
-  .input-form button:disabled {
-    background-color: #b0b0b0;
-    cursor: not-allowed;
-    transform: none;
-  }
-  
-  /* Styling for todo list */
-  .data-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  .data-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.3s ease;
-  }
-  
-  .data-item:hover {
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-  }
-  
-  .data-item span {
-    font-size: 18px;
-    font-weight: 500;
-    color: #333;
-    flex: 1;
-    text-align: left;
-  }
-  
-  .data-item button {
-    padding: 8px 16px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    margin-left: 10px;
-  }
-  
-  .data-item button:hover {
-    background-color: #218838;
-    transform: translateY(-2px);
-  }
-  
-  .data-item button:last-child {
-    background-color: #dc3545;
-  }
-  
-  .data-item button:last-child:hover {
-    background-color: #c82333;
-    transform: translateY(-2px);
-  }
-  
+  width: 90%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 30px;
+  text-align: center;
+  background-color: #000;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #007bff, #ff69b4);
+  color: white;
+}
+
+/* Heading style */
+h2 {
+  font-size: 28px;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Input form styling */
+.input-form {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+  gap: 15px;
+}
+
+.input-form input {
+  padding: 12px 18px;
+  font-size: 16px;
+  border: 2px solid #ddd;
+  border-radius: 30px;
+  width: 70%;
+  max-width: 350px;
+  background-color: #000;
+  color: white;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.input-form input:focus {
+  outline: none;
+  border-color: #ff69b4;
+  background-color: #222;
+}
+
+.input-form button {
+  padding: 12px 25px;
+  background-color: #ff69b4;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+}
+
+.input-form button:hover {
+  background-color: #d63384;
+  transform: translateY(-2px);
+}
+
+.input-form button:disabled {
+  background-color: #b0b0b0;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Styling for todo list */
+.data-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.data-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background-color: #000;
+  color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.data-item:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.data-item span {
+  font-size: 18px;
+  font-weight: 500;
+  color: white;
+  flex: 1;
+  text-align: left;
+}
+
+.data-item button {
+  padding: 8px 16px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-left: 10px;
+}
+
+.data-item button:hover {
+  background-color: #218838;
+  transform: translateY(-2px);
+}
+
+.data-item button:last-child {
+  background-color: #dc3545;
+}
+
+.data-item button:last-child:hover {
+  background-color: #c82333;
+  transform: translateY(-2px);
+}

@@ -1,5 +1,7 @@
 /* Home.css */
-
+.body{
+  background: linear-gradient(135deg, #007bff, #ff69b4);
+}
 /* General container styling */
 .container {
   width: 90%;
@@ -11,7 +13,6 @@
   border-radius: 10px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #007bff, #ff69b4);
   color: white;
 }
 

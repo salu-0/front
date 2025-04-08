@@ -75,15 +75,9 @@ function Home() {
   const handleDelete = async (id) => {
     try {
       await axios.delete(`https://back-lts2.onrender.com/api/todos/${id}`);
-      // Only update UI after successful deletion
-      setTodos(prevTodos => prevTodos.filter(todo => todo._id !== id));
+      setTodos((prevTodos) => prevTodos.filter(todo => todo._id !== id));  // Use prevTodos for a safer update
     } catch (error) {
-      if (error.response?.status === 500) {
-        setError('Server error occurred. Please try again later.');
-      } else {
-        setError(error.response?.data?.message || error.message || 'Failed to delete todo');
-      }
-      console.error('Error deleting todo:', error);
+      console.error('Error deleting todo:', error.response ? error.response.data : error.message);
     }
   };
   

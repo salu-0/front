@@ -34,7 +34,7 @@ function Home() {
     e.preventDefault();
     if (inputValue.trim() === '') return;
 
-    setLoading(true);
+    setLoading(false);
     try {
       const response = await axios.post('https://back-lts2.onrender.com/api/todos', {
         text: inputValue,

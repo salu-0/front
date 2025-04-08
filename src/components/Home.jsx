@@ -3,94 +3,80 @@ import axios from 'axios';
 import './Home.css';
 
 function Home() {
-  const [todos, setTodos] = useState([]);   // To store the list of todos
-  const [inputValue, setInputValue] = useState(''); // To store the input value for the new todo
-  const [loading, setLoading] = useState(false); // To handle loading state while adding a todo
-  const [error, setError] = useState(null); // To store and display fetch errors
+  const [todos, setTodos] = useState([]);
+  const [inputValue, setInputValue] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Fetch todos from the server when the component loads
+  // Fetch todos on mount
   useEffect(() => {
     fetchTodos();
-  }, []); // Only fetch on mount to avoid infinite loop
+  }, []);
 
   // Fetch all todos
   const fetchTodos = async () => {
     try {
-      setError(null); // Clear any previous errors
+      setError(null);
       const response = await axios.get('https://back-lts2.onrender.com/api/todos');
-      setTodos(response.data);  // Set the fetched todos to state
+      setTodos(response.data);
     } catch (error) {
       if (error.response?.status === 500) {
         setError('Server error occurred. Please try again later.');
       } else {
         setError(error.response?.data?.message || error.message || 'Failed to fetch todos');
       }
-      console.error('Error fetching todos:', error);  // Log any errors
+      console.error('Error fetching todos:', error);
     }
   };
 
-  // Add a new todo
+  // Add new todo
   const handleSubmit = async (e) => {
-    e.preventDefault();  // Prevent form from reloading page
-    if (inputValue.trim() === '') return;  // Do nothing if input is empty
+    e.preventDefault();
+    if (inputValue.trim() === '') return;
 
-    setLoading(true);  // Set loading to true while adding todo
+    setLoading(true);
     try {
-      // Create a temporary todo with a temporary ID
-      const tempTodo = {
-        _id: Date.now(), // Temporary ID
-        text: inputValue,
-        completed: false
-      };
-      
-      // Optimistically add the todo to the UI
-      setTodos(prevTodos => [tempTodo, ...prevTodos]);
-      setInputValue('');  // Clear the input field immediately
-
-      // Make the API call
       const response = await axios.post('https://back-lts2.onrender.com/api/todos', {
         text: inputValue,
         completed: false
       });
 
-      // Replace the temporary todo with the real one from the server
-      setTodos(prevTodos => prevTodos.map(todo => 
-        todo._id === tempTodo._id ? response.data : todo
-      ));
+      // Use actual data from server
+      setTodos(prevTodos => [response.data, ...prevTodos]);
+      setInputValue('');
     } catch (error) {
-      // If there's an error, remove the temporary todo
-      setTodos(prevTodos => prevTodos.filter(todo => todo._id !== tempTodo._id));
       if (error.response?.status === 500) {
         setError('Server error occurred. Please try again later.');
       } else {
         setError(error.response?.data?.message || error.message || 'Failed to add todo');
       }
-      console.error('Error adding todo:', error);  // Log any errors
+      console.error('Error adding todo:', error);
     } finally {
-      setLoading(false);  // Reset loading state after the request
+      setLoading(false);
     }
   };
 
-  // Delete a todo
+  // Delete todo
   const handleDelete = async (id) => {
     try {
       await axios.delete(`https://back-lts2.onrender.com/api/todos/${id}`);
-      setTodos((prevTodos) => prevTodos.filter(todo => todo._id !== id));  // Use prevTodos for a safer update
+      setTodos(prevTodos => prevTodos.filter(todo => todo._id !== id));
     } catch (error) {
-      console.error('Error deleting todo:', error.response ? error.response.data : error.message);
+      console.error('Error deleting todo:', error.response?.data || error.message);
     }
   };
-  
-  // Edit a todo
+
+  // Edit todo
   const handleEdit = async (id) => {
-    const updatedValue = prompt('Edit todo:', '');  // Prompt user for new value
+    const updatedValue = prompt('Edit todo:', '');
     if (updatedValue !== null && updatedValue.trim() !== '') {
       try {
         const response = await axios.put(`https://back-lts2.onrender.com/api/todos/${id}`, {
           text: updatedValue
         });
-        // Only update UI after successful edit
-        setTodos(prevTodos => prevTodos.map(todo => todo._id === id ? response.data : todo));
+        setTodos(prevTodos =>
+          prevTodos.map(todo => (todo._id === id ? response.data : todo))
+        );
       } catch (error) {
         if (error.response?.status === 500) {
           setError('Server error occurred. Please try again later.');
@@ -111,26 +97,26 @@ function Home() {
         <input
           type="text"
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}  // Update input value
+          onChange={(e) => setInputValue(e.target.value)}
           placeholder="Enter a task"
-          disabled={loading}  // Disable input while loading
+          disabled={loading}
         />
         <button type="submit" disabled={loading}>
-          {loading ? 'Adding...' : 'Add Task'}  {/* Show loading text while adding */}
+          {loading ? 'Adding...' : 'Add Task'}
         </button>
       </form>
 
-      {/* Display error message if there is one */}
+      {/* Error message */}
       {error && (
         <div className="error-message">
           {error}
         </div>
       )}
 
-      {/* Display list of todos */}
+      {/* Todo List */}
       <div className="data-list">
         {todos.map((todo, index) => (
-          <div key={todo._id || index} className="data-item">
+          <div key={todo._id?.toString() || index} className="data-item">
             <span>{todo.text}</span>
             <button onClick={() => handleEdit(todo._id)}>Edit</button>
             <button onClick={() => handleDelete(todo._id)}>Delete</button>
